@@ -90,6 +90,43 @@ Resources:
         RouteTableId: !Ref PublicRouteTable
         SubnetId: !Ref PublicSubnet2
 
+  VPCSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: Default security group
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 1025
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 1025
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+
+  eksClusterRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - eks.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        - arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
+
 Outputs: 
 
   VPC: 
@@ -121,3 +158,15 @@ Outputs:
       Value: !Ref PublicSubnet2
       Export:
         Name: !Sub ${EnvironmentName}-PUB2-SN
+
+  SecurityGroup:
+    Description: VPC security group.
+    Value: !Ref VPCSecurityGroup
+    Export:
+      Name: !Sub ${EnvironmentName}-SecGrp
+
+  RoleArn:
+    Description: The role that Amazon EKS will use to create AWS resources for Kubernetes clusters
+    Value: !GetAtt eksClusterRole.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-RoleArn"      
