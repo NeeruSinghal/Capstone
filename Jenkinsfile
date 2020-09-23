@@ -39,8 +39,8 @@ pipeline {
       stage('Deploy containers') {
         steps {
           withAWS(region:'us-west-2',credentials:'aws') {
-            sh 'kubectl apply -f ./deployments/deployments.yaml'  
-            sh 'kubectl apply -f ./deployments/service.yaml'
+            sh 'kubectl apply -f deployments.yaml'  
+            sh 'kubectl apply -f service.yaml'
            }
         }
       } 
