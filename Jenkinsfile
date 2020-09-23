@@ -10,6 +10,12 @@ pipeline {
           sh 'pylint --disable=R,C,W1203 **.py'
       }
     }
+
+    stage('Build Docker image') {
+        steps {
+          sh 'docker build -t app .'
+      }
+    }
      
   }
 }  
