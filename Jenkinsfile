@@ -39,7 +39,7 @@ pipeline {
       stage('Deploy containers') {
         steps {
           withAWS(region:'us-west-2',credentials:'aws') {
-            sh "kubectl set image deployment/capstone-demo web=909060519780.dkr.ecr.us-west-2.amazonaws.com/capstone:latest"
+            sh "kubectl set image deployment/capstone-demo back-end=909060519780.dkr.ecr.us-west-2.amazonaws.com/capstone:latest"
             sh 'kubectl apply -f deployments/deployments.yml'  
             sh "kubectl get nodes"
             sh "kubectl get deployment"
